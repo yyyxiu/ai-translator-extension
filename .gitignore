@@ -1,0 +1,5 @@
+.DS_Store
+# CRX 签名私钥只留在本机（manifest 里的公钥已入库，扩展 ID 不受影响）
+extension-key.pem
+# 本机个人备忘，不属于公开仓库
+先看我.txt

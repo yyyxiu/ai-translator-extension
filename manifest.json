@@ -1,0 +1,48 @@
+{
+  "manifest_version": 3,
+  "name": "AI 整页翻译",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAp7Vu2QEMzl6bzv/DFM8J3h6L7JoTQPfTUmtsYgZJ5uL5jX06rIoGOT9bttr4v66zmHU2lbnbFliO+baM/T8C3DgvSNs7fPbLV2Pd2W66SczuEA+SEpa6apEvxALZ9KwEB9B6To/tSeQJcEq65JeE+Abc9N1oxRKeO/Lnx+fdgv66mo1vkCMK3VfPpHxECp1pruI3dvikuV+111FBerNXeK2XlX088eWOXNFoHo8Ri2xaH68Doc7YpzHMdLCssKdDgGk2ncNc00mWEU87H97uj2djMHkqqJF+oNtTCh6dEKsmorc5JDw0AZY2tjouPHGBmW0BHUSYuDm4GRMt2896zwIDAQAB",
+  "version": "1.1.1",
+  "description": "基于大模型接口的网页整页翻译插件",
+  "permissions": [
+    "storage",
+    "activeTab",
+    "scripting"
+  ],
+  "host_permissions": [
+    "https://api.deepseek.com/*"
+  ],
+  "optional_host_permissions": [
+    "https://*/*",
+    "http://*/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "AI 整页翻译"
+  },
+  "commands": {
+    "translate-page": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+Y",
+        "mac": "Command+Shift+Y"
+      },
+      "description": "翻译当前页面"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "content.js",
+        "selection.js"
+      ],
+      "run_at": "document_idle",
+      "all_frames": true
+    }
+  ]
+}

@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <style>
+    * { box-sizing: border-box; }
+    html, body { margin: 0; }
+    body {
+      width: 380px;
+      padding: 14px 14px 10px;
+      background: #1e1e1e;
+      color: #f2f2f2;
+      font: 13px/1.5 -apple-system, BlinkMacSystemFont, "PingFang SC",
+        "Microsoft YaHei", system-ui, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ---------- 顶部 ---------- */
+    .head { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+    .avatar {
+      width: 34px; height: 34px; border-radius: 50%; flex: none;
+      background: #3a3a3c; display: flex; align-items: center; justify-content: center;
+      font-size: 17px;
+    }
+    .head-title { font-size: 14px; font-weight: 600; }
+    .head-sub { font-size: 11px; color: #9a9a9a; margin-top: 1px; }
+    .head-sub.warn { color: #d9a441; }
+    .badge {
+      margin-left: auto; flex: none; font-size: 11px; padding: 3px 9px;
+      border-radius: 999px; background: #3d3320; color: #d9a441; white-space: nowrap;
+    }
+
+    /* ---------- 语言选择 ---------- */
+    .lang { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+    .lang-card {
+      flex: 1; min-width: 0; background: #2b2b2d; border-radius: 12px;
+      padding: 9px 12px;
+    }
+    .lang-label { font-size: 11px; color: #8e8e93; }
+    .lang-value {
+      font-size: 14px; font-weight: 600; margin-top: 2px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .lang-arrow { color: #6e6e73; font-size: 15px; flex: none; }
+    select {
+      appearance: none; -webkit-appearance: none;
+      border: 0; background: transparent; color: #f2f2f2;
+      font: inherit; font-size: 14px; font-weight: 600;
+      width: 100%; padding: 0; margin-top: 2px; cursor: pointer;
+    }
+    select option { background: #2b2b2d; color: #f2f2f2; }
+
+    /* ---------- 卡片 ---------- */
+    .card { background: #2b2b2d; border-radius: 12px; margin-bottom: 12px; overflow: hidden; }
+    .row { display: flex; align-items: center; gap: 8px; padding: 11px 12px; min-height: 44px; }
+    .row + .row { border-top: 1px solid #38383a; }
+    .row-label { color: #cfcfd2; white-space: nowrap; }
+    .row-value { margin-left: auto; color: #9a9a9a; font-size: 12px; }
+    .row-action { cursor: pointer; }
+    .row-action:hover { background: #333335; }
+    .chev { margin-left: auto; color: #6e6e73; font-size: 17px; line-height: 1; transition: transform .18s; }
+    .chev.open { transform: rotate(90deg); }
+
+    /* ---------- 展开的配置面板 ---------- */
+    .panel { border-top: 1px solid #38383a; background: #262628; }
+    .input-inline {
+      flex: 1; min-width: 0; margin-left: 8px;
+      border: 1px solid #3f3f42; border-radius: 8px; background: #232325;
+      color: #f2f2f2; font: inherit; font-size: 12px; padding: 5px 8px;
+    }
+    .input-inline:focus { outline: none; border-color: #f0386e; }
+    .input-inline::placeholder { color: #6e6e73; }
+    select.select-inline {
+      flex: 1; min-width: 0; margin-left: 8px;
+      border: 1px solid #3f3f42; border-radius: 8px; background: #232325;
+      color: #f2f2f2; font-size: 12px; font-weight: 400; padding: 5px 8px;
+      margin-top: 0; cursor: pointer;
+    }
+    select.select-inline:focus { outline: none; border-color: #f0386e; }
+    .ghost {
+      width: 100%; padding: 8px; border: 1px solid #3f3f42; border-radius: 8px;
+      background: transparent; color: #cfcfd2; font-family: inherit; font-size: 12px;
+      cursor: pointer; transition: background .18s, border-color .18s;
+    }
+    .ghost:hover:not(:disabled) { background: #333335; border-color: #4f4f52; }
+    .ghost:disabled { opacity: .5; cursor: default; }
+
+    /* ---------- 快捷键 ---------- */
+    .keycap {
+      margin-left: auto; padding: 3px 9px; min-width: 36px;
+      border: 1px solid #4a4a4c; border-radius: 6px; background: #333335;
+      color: #e8e8ea; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 11px; line-height: 1.6; white-space: nowrap; cursor: pointer;
+      transition: border-color .18s, background .18s, color .18s;
+    }
+    .keycap:hover { border-color: #f0386e; }
+    .keycap.recording { border-color: #f0386e; background: #3a2a31; color: #f0386e; }
+
+    /* ---------- 开关 ---------- */
+    .switch {
+      margin-left: auto; flex: none; width: 40px; height: 22px; padding: 0;
+      border: 0; border-radius: 11px; background: #4a4a4c;
+      position: relative; cursor: pointer; transition: background .18s;
+    }
+    .switch::after {
+      content: ""; position: absolute; top: 2px; left: 2px;
+      width: 18px; height: 18px; border-radius: 50%; background: #fff;
+      transition: transform .18s;
+    }
+    .switch[aria-checked="true"] { background: #f0386e; }
+    .switch[aria-checked="true"]::after { transform: translateX(18px); }
+
+    /* ---------- 主按钮 ---------- */
+    .primary {
+      width: 100%; height: 46px; margin-bottom: 8px;
+      border: 0; border-radius: 12px; background: #f0386e; color: #fff;
+      font-family: inherit; font-size: 15px; font-weight: 600;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      cursor: pointer; transition: background .18s;
+    }
+    .primary:hover:not(:disabled) { background: #d92e60; }
+    .primary:disabled { opacity: .6; cursor: default; }
+    .kbd { font-size: 11px; font-weight: 400; opacity: .85; }
+
+    .status { min-height: 16px; margin-bottom: 8px; font-size: 11px; text-align: center; color: #9a9a9a; }
+    .status.ok { color: #4ade80; }
+    .status.err { color: #ff6b6b; }
+
+    /* ---------- 底部按钮组 ---------- */
+    .tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: #38383a; }
+    .tile {
+      border: 0; background: #2b2b2d; color: #cfcfd2; font-family: inherit;
+      font-size: 12px; padding: 11px 4px; cursor: pointer; transition: background .18s;
+      display: flex; flex-direction: column; align-items: center; gap: 5px;
+    }
+    .tile:hover { background: #333335; }
+    .tile-icon { font-size: 16px; line-height: 1; }
+
+    /* ---------- 页脚 ---------- */
+    .foot { display: flex; align-items: center; padding: 2px 2px 0; font-size: 11px; color: #6e6e73; }
+    .foot .right { margin-left: auto; }
+  </style>
+</head>
+<body>
+  <header class="head">
+    <div class="avatar">🌐</div>
+    <div>
+      <div class="head-title">AI 整页翻译</div>
+      <div class="head-sub" id="headSub">未配置 API Key</div>
+    </div>
+    <span class="badge" id="badge">DeepSeek</span>
+  </header>
+
+  <section class="lang">
+    <div class="lang-card">
+      <div class="lang-label">原文语言</div>
+      <div class="lang-value">自动检测</div>
+    </div>
+    <div class="lang-arrow">→</div>
+    <label class="lang-card">
+      <div class="lang-label">目标语言</div>
+      <select id="targetLang">
+        <option value="中文">中文</option>
+        <option value="英文">英文</option>
+        <option value="日文">日文</option>
+        <option value="韩文">韩文</option>
+        <option value="法文">法文</option>
+        <option value="德文">德文</option>
+      </select>
+    </label>
+  </section>
+
+  <section class="card">
+    <div class="row row-action" id="serviceHead">
+      <span class="row-label">翻译服务：</span>
+      <span class="row-value" id="serviceModel">deepseek-chat</span>
+      <span class="chev" id="serviceChev">›</span>
+    </div>
+    <div class="panel" id="servicePanel" hidden>
+      <div class="row">
+        <span class="row-label">接口地址</span>
+        <input id="baseUrl" class="input-inline" type="text"
+               placeholder="https://api.deepseek.com/v1" autocomplete="off" spellcheck="false" />
+      </div>
+      <div class="row">
+        <span class="row-label">API Key</span>
+        <input id="apiKey" class="input-inline" type="password"
+               placeholder="sk-…" autocomplete="off" />
+      </div>
+      <div class="row">
+        <span class="row-label">模型</span>
+        <select id="modelSelect" class="select-inline" hidden></select>
+        <input id="model" class="input-inline" type="text"
+               placeholder="deepseek-chat" autocomplete="off" spellcheck="false" />
+      </div>
+      <div class="row">
+        <button class="ghost" id="fetchModels">从接口拉取模型列表</button>
+      </div>
+    </div>
+  </section>
+
+  <button class="primary" id="translate"><span id="primaryLabel">⇄ 翻译本页</span></button>
+  <div class="status" id="status"></div>
+
+  <section class="card">
+    <div class="row">
+      <span class="row-label">翻译快捷键</span>
+      <button class="keycap" id="shortcutBtn">—</button>
+    </div>
+    <div class="row">
+      <span class="row-label">显示原文（双语对照）</span>
+      <button class="switch" id="swOriginal" role="switch" aria-checked="true"></button>
+    </div>
+    <div class="row">
+      <span class="row-label">总是翻译该网站</span>
+      <button class="switch" id="swSite" role="switch" aria-checked="false"></button>
+    </div>
+    <div class="row">
+      <span class="row-label">划词翻译</span>
+      <button class="switch" id="swSelection" role="switch" aria-label="划词翻译" aria-checked="true"></button>
+    </div>
+    <div class="row">
+      <span class="row-label">自动补译动态内容</span>
+      <button class="switch" id="swDyn" role="switch" aria-checked="true"></button>
+    </div>
+    <div class="row row-action" id="restore">
+      <span class="row-label">还原原文</span>
+      <span class="chev">›</span>
+    </div>
+  </section>
+
+  <section class="card tiles">
+    <button class="tile" id="tileRestore"><span class="tile-icon">↺</span>还原原文</button>
+    <button class="tile" id="tileKey"><span class="tile-icon">🔑</span>获取 Key</button>
+    <button class="tile" id="tileHelp"><span class="tile-icon">❓</span>帮助中心</button>
+  </section>
+
+  <footer class="foot">
+    <span>v1.1.0</span>
+    <span class="right">chrome 扩展 · DeepSeek</span>
+  </footer>
+
+  <script src="popup.js"></script>
+</body>
+</html>
